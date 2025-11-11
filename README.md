@@ -68,7 +68,7 @@ rosbag record /camera/left/image_raw /camera/right/image_raw
 
 ### 3.4 视频示例
 下方为系统整体采集流程的短视频演示  
-<video src="doc/video/video1.mp4"></video>
+[点击下载系统采集演示视频 (video1.mp4)](doc/video/video1.mp4)
 
 
 
