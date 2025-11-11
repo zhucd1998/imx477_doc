@@ -15,13 +15,12 @@
 | 相机模块 | Arducam IMX477 ×2 | 双目同步视频采集 |
 | 相机接口板 | Arducam UC-512 + UC-517 | 双路 CSI 接口转换与同步控制 |
 | 存储 | SSD 500GB（USB3.0 接口） | 数据缓存与录制 |
-| 电源 | 5V/5A 稳压电源 | 提供稳定供电 |
-| 其他 | HDMI 显示器、键鼠、散热系统 | 实验调试辅助设备 |
+| 电源 | 5V/3A 充电宝 | 提供稳定供电 |
 
 ### 2.2 系统连接结构图
-示意图（可在 `docs/figures/system_architecture.png` 中替换为你的结构图）：
+示意图如下所示：
 
-![系统结构图](docs/figures/system_architecture.png)
+![视觉采集系统整体结构图](docs/figures/whole_structure.png)
 
 连接说明：
 - 两个 IMX477 模块分别连接至 UC-517，再通过 UC-512 与树莓派的 CSI0 / CSI1 接口连接；
