@@ -46,3 +46,103 @@
 sudo apt update
 sudo apt install python3-opencv
 pip install numpy
+```
+
+### 3.3 视频采集流程
+1. 打开树莓派并启动采集脚本；
+2. 确认双目视频流均输出正常；
+3. 根据实验环境调整曝光、增益；
+4. 保存视频流（或录制 rosbag）到 `/data/raw/`；
+5. 检查帧同步与时间戳。
+
+采集命令示例（Python）：
+```bash
+python3 capture_dual_imx477.py --output ./data/raw/sequence_01/
+```
+
+若使用 ROS：
+```bash
+rosbag record /camera/left/image_raw /camera/right/image_raw
+```
+
+---
+
+## 4. 相机标定流程
+
+### 4.1 标定设备与环境
+- 标定板：9×6 棋盘格，方格边长 25 mm；
+- 拍摄距离：0.5–1.0 m；
+- 照明：均匀光照，避免反光；
+- 若为水下标定，应在相同折射环境下进行。
+
+### 4.2 标定方法（基于 ROS）
+```bash
+rosrun camera_calibration cameracalibrator.py   --size 9x6 --square 0.025   left:=/camera/left/image_raw right:=/camera/right/image_raw   left_camera:=/camera/left right_camera:=/camera/right
+```
+
+### 4.3 标定结果
+- 输出文件：`config/left.yaml` 与 `config/right.yaml`
+- 包含内参矩阵、畸变系数、旋转和平移矩阵：
+  ```yaml
+  camera_matrix:
+    data: [fx, 0, cx, 0, fy, cy, 0, 0, 1]
+  distortion_coefficients:
+    data: [k1, k2, p1, p2, k3]
+  ```
+
+---
+
+## 5. Ground Truth（GT）生成流程
+
+### 5.1 目标
+基于采集的双目序列生成高精度轨迹 Ground Truth，用于 SLAM 结果评估。
+
+### 5.2 方法一：基于 VINS-Fusion
+1. 导入双目序列；
+2. 运行轨迹估计；
+3. 导出轨迹：
+   ```bash
+   vins_node output_gt.csv
+   ```
+4. 转换格式：
+   ```
+   timestamp tx ty tz qx qy qz qw
+   ```
+
+### 5.3 方法二：基于 ORB-SLAM3
+1. 使用标定文件与双目图像运行 ORB-SLAM3；
+2. 导出轨迹文件：
+   ```
+   KeyFrameTrajectory.txt
+   ```
+3. 重采样与时间对齐；
+4. 存储在 `data/gt/sequence_01_gt.txt`。
+
+---
+
+## 6. 数据整理与后处理
+- 对采集数据进行帧同步、亮度一致性检测；
+- 删除模糊帧与异常曝光帧；
+- 可执行的示例脚本：
+  ```bash
+  python3 scripts/clean_dataset.py --input ./data/raw --output ./data/processed
+  ```
+
+---
+
+## 7. 附录
+- **标定工具**：ROS camera_calibration / Kalibr  
+- **轨迹评估工具**：evo、rpg_trajectory_evaluation  
+- **数据命名规范**：
+  ```
+  sequence_01/
+    left/
+    right/
+    imu/
+    gt/
+  ```
+
+---
+
+© Chengdong Zhu, 2025.  
+该文档用于实验记录与系统说明，未经许可请勿转载。
