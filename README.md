@@ -20,7 +20,7 @@
 ### 2.2 系统连接结构图
 示意图如下所示：
 
-![视觉采集系统整体结构图](docs/figures/whole_structure.png)
+![视觉采集系统整体结构图](doc/figures/whole_structure.png)
 
 连接说明：
 - 两个 IMX477 模块分别连接至 UC-517，再通过 UC-512 与树莓派的 CSI0 / CSI1 接口连接；
